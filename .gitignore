@@ -1,0 +1,9 @@
+# Visual Studio関連の無視リスト
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.user
+*.exe
+*.obj
