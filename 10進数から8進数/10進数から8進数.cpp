@@ -5,14 +5,15 @@ using namespace std;
 int main() {
 
 	const int bit_num = 16;
-	int dec, oct[bit_num];
-	int tmp, i;
+	int dec;
+	
+	int oct[bit_num] = {
 
-	for (i = 0; i < bit_num; ++i) {
+		0
+
+	};
 	
-		oct[i] = 0;
-	
-	}
+	int tmp, i;
 
 	cout << "input decimal:";
 	cin >> dec;
