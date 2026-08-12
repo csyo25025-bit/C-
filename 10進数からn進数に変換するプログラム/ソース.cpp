@@ -5,24 +5,32 @@ using namespace std;
 int main() {
 
     const int bit_num = 32;
-    const char digits[] = "0123456789ABCDEF";
+    const char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     int n, num, tmp;
     char ANS[bit_num];
     int i = 0;
 
-    cout << "何進数に変換しますか(2-16)?" << endl;
+    cout << "何進数に変換しますか(2-36)?" << endl;
     cin >> n;
 
-    if (n < 2 || n > 16) {
+    if (n < 2 || n > 36) {
 
-        cout << "2から16の範囲で入力してください。" << endl;
+        cout << "2から36の範囲で入力してください。" << endl;
         return 1;
 
     }
 
     cout << "10進数はなんですか?" << endl;
     cin >> num;
+
+    if (num < 0) {
+
+        cout << "0以上の整数を入力してください" << endl;
+        return 1;
+
+    }
+
     tmp = num;
 
     do {
