@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="10進数からn進数に変換するプログラム.vcxproj" />
+  <Project Path="10進数からn進数に変換するプログラム.vcxproj" Id="fe667d37-20d3-4c06-9820-4242ce416a76" />
 </Solution>
