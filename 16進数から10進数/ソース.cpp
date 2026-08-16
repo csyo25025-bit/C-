@@ -18,39 +18,9 @@ int main() {
 
 	for (int i = 0; i < ex; ++i) {
 
-		if (HEX[i] == 'A') {
-
-			num = 10;
-
-		}
-
-		else if (HEX[i] == 'B') {
-
-			num = 11;
-
-		}
-
-		else if (HEX[i] == 'C') {
-
-			num = 12;
-
-		}
-
-		else if (HEX[i] == 'D') {
-
-			num = 13;
-
-		}
-
-		else if (HEX[i] == 'E') {
-
-			num = 14;
-
-		}
-
-		else if (HEX[i] == 'F') {
-
-			num = 15;
+		if ('A' <= HEX[i] && HEX[i] <= 'F') {
+		
+			num = (HEX[i] - 'A') + 10;
 
 		}
 		
