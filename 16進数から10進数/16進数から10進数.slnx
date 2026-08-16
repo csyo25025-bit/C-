@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="16進数から10進数.vcxproj" Id="d2db5034-7b9b-410a-8473-10398205e00c" />
+</Solution>
