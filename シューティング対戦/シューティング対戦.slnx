@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="シューティング対戦.vcxproj" />
+  <Project Path="シューティング対戦.vcxproj" Id="1aba0859-7067-48f7-a440-45a7697656d6" />
 </Solution>
