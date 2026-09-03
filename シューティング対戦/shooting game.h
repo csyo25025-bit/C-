@@ -35,6 +35,8 @@ const int LILAC = GetColor(192, 128, 192);
 
 /*ボール設定*/
 const int BALL_R = 10;
+const int BULLET_SPEED = 10;
+const int BULLET_MAX = 10;
 
 /*キャラ設定*/
 const int PLAYER_HP = 100;
@@ -52,6 +54,16 @@ const int ENEMY_HP = 100;
 
 /*関数宣言*/
 void drawText(int x, int y, const char* txt, int val, int siz, int col);
+
+struct Bullet {
+
+public:
+
+	double x, y;
+	double vx, vy;
+	bool active;
+
+};
 
 class Fighter {
 
@@ -72,5 +84,7 @@ public:
 	int gethp();
 	void draw();
 	void move(int key);
+	void enemymove();
+	void shoot(Bullet& b);
 
 };
