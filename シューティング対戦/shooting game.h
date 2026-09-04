@@ -8,14 +8,16 @@
 
 using namespace std;
 
-
 const int FRAME_RATE = 30;
 const int FRAME_TITLE = 1000 / FRAME_RATE;
+const int limittime = 10;
 
 const int COL = 15;
 const int ROW = 9;
 const int WIDTH = 960;
 const int HEIGHT = 640;
+
+int EDGE = HEIGHT / 8;
 
 const int BSIZE = 80;
 
@@ -35,7 +37,7 @@ const int LILAC = GetColor(192, 128, 192);
 
 /*ボール設定*/
 const int BALL_R = 10;
-const int BULLET_SPEED = 10;
+const int BULLET_SPEED = 100;
 const int BULLET_MAX = 10;
 
 /*キャラ設定*/
@@ -82,9 +84,12 @@ public:
 	void init(int x, int y, int lr, int col);
 	int getCol();
 	int gethp();
+	int getx();
+	int gety();
 	void draw();
 	void move(int key);
 	void enemymove();
 	void shoot(Bullet& b);
+	void damage(int val);
 
 };

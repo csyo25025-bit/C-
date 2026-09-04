@@ -17,6 +17,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	int scene = TITLE;
 	int timer = 0;
+	int play_time = 0;
+	int time;
 
 	Fighter fighter[FIGHTER_MAX];
 	Bullet bullet;
@@ -32,7 +34,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		ClearDrawScreen();
 
 		switch (scene) {
-		
+
 		case TITLE:
 
 			drawText(WIDTH / 2, HEIGHT * 0.33, "SHOOTING GAME", 0, 100, EMERALDGREEN);
@@ -43,75 +45,95 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			}
 
-				if (CheckHitKey(KEY_INPUT_SPACE)) {
-				
-					fighter[0].init(BSIZE * 1.5, BSIZE * 1.5, 8, GREEN);
-					fighter[1].init(BSIZE * (COL - 1.5), BSIZE * (ROW - 1.5), 8, MAGENTA);
+			if (CheckHitKey(KEY_INPUT_SPACE)) {
 
-					bullet.active = false;
+				fighter[0].init(BSIZE * 1.5, BSIZE * 1.5, 8, GREEN);
+				fighter[1].init(BSIZE * (COL - 1.5), BSIZE * (ROW - 1.5), 8, MAGENTA);
 
-					scene = PLAY;
+				bullet.active = false;
 
-				}
+				play_time = 0;
+				scene = PLAY;
 
-				break;
+			}
+
+			break;
 
 		case PLAY:
 
+			++play_time;
+			time = limittime - play_time / 30;
+
+			drawText(WIDTH / 2, EDGE, "TIME:%d", time, 50, GOLD);
+
 			for (int i = 0; i < FIGHTER_MAX; ++i) {
+			
 				if (i == 0) {
-				
+
 					fighter[i].move(FIGHTER_KEY[i]);
-				
+
 				}
+
 				else if (i == 1) {
-				
+
 					fighter[i].enemymove();
 
 				}
 
 			}
 
-			if (fighter[0].gethp() <= 0 || fighter[1].gethp() <= 0) {
-			
+			if (fighter[1].gethp() <= 0 || time <= 0)  {
+
 				scene = OVER;
 				timer = 0;
-			
+
 			}
 
 			if (bullet.active) {
-			
+
 				bullet.x += bullet.vx;
 				bullet.y += bullet.vy;
 
-				if (bullet.x<0 || bullet.x>WIDTH || bullet.y<0 || bullet.y>HEIGHT) {
+				int dx = fighter[1].getx() - bullet.x;
+				int dy = fighter[1].gety() - bullet.y;
+
+				if (dx * dx + dy * dy < (FIGHTER_SIZE + BALL_R) * (FIGHTER_SIZE + BALL_R)) {
 				
+					fighter[1].damage(10);
 					bullet.active = false;
 				
 				}
 
+				if (bullet.x<0 || bullet.x>WIDTH || bullet.y<0 || bullet.y>HEIGHT)  {
+
+					bullet.active = false;
+
+				}
+
 			}
 
-			if (CheckHitKey(KEY_INPUT_Z) == 1&&!bullet.active) {
-			
+			if (CheckHitKey(KEY_INPUT_Z) == 1 && !bullet.active) {
+
 				fighter[0].shoot(bullet);
-			
+
 			}
 
 			break;
 
 		case OVER:
 
-			if (fighter[0].gethp() > fighter[1].gethp()) {
+			if (fighter[1].gethp() <= 0)  {
 			
 				drawText(WIDTH / 2, HEIGHT / 2, "あなたの勝利！", 0, 100, fighter[0].getCol());
 			
 			}
-			else if (fighter[0].gethp() < fighter[1].gethp()) {
+			
+			else if (time <= 0)  {
 			
 				drawText(WIDTH / 2, HEIGHT / 2, "あなたの負け", 0, 100, fighter[1].getCol());
 			
 			}
+
 			else {
 			
 				drawText(WIDTH / 2, HEIGHT / 2, "引き分け", 0, 100, LILAC);
@@ -129,14 +151,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 
 		for (int i = 0; i < FIGHTER_MAX; ++i) {
-		
+
 			fighter[i].draw();
 
-			int x = BSIZE * 3 + (WIDTH - BSIZE * 6) * i, y = BSIZE * 0.5;
-
-			drawText(x, y, "PLAYER_HP %d", fighter[i].gethp(), 60, fighter[i].getCol());
-		
 		}
+
+			int x = BSIZE * 3 + (WIDTH - BSIZE * 6) , y = BSIZE * 0.5;
+
+
+			if (fighter[1].gethp() <= PLAYER_HP / 3) {
+
+				drawText(x, y, "ENEMY_HP %d", fighter[1].gethp(), 60, RED);
+
+			}
+
+			else {
+
+				drawText(x, y, "ENEMY_HP %d", fighter[1].gethp(), 60, fighter[1].getCol());
+
+			}
+		
 
 		if (bullet.active) {
 
@@ -178,7 +212,6 @@ void Fighter::init(int x, int y, int lr, int col) {
 	this->y = y;
 	this->lr = lr;
 	this->color = col;
-	this->angle = 0;
 	this->speed = 0;
 	this->hp = 100;
 
@@ -193,6 +226,18 @@ int Fighter::getCol() {
 int Fighter::gethp() {
 
 	return hp;
+
+}
+
+int Fighter::getx() {
+
+	return x;
+
+}
+
+int Fighter::gety() {
+
+	return y;
 
 }
 
@@ -218,76 +263,89 @@ void Fighter::draw() {
 }
 
 void Fighter::move(int key) {
-
-	if (CheckHitKey(key)) {
 	
-		if (speed < SPEED) {
+	if (CheckHitKey(KEY_INPUT_RIGHT) == 1 && CheckHitKey(KEY_INPUT_UP) == 1) {
 		
-			++speed;
-		
-		}
-	
-	}
-
-	else {
-	
-		angle = angle + lr;
-		speed = speed * 0.9;
-	
-	}
-
-	int px = x + speed * cos(M_PI * angle / 180);
-	int py = y + speed * sin(M_PI * angle / 180);
-
-	x = px;
-	y = py;
-
-	if (CheckHitKey(KEY_INPUT_UP) == 1) {
-
+		x += 10; 
 		y -= 10;
-
+		angle = 315;
+	
 	}
-
-	if (CheckHitKey(KEY_INPUT_DOWN) == 1) {
-
-		y += 10;
-
-	}
-
-	if (CheckHitKey(KEY_INPUT_LEFT) == 1) {
-
-		x -= 10;
-
-	}
-
-	if (CheckHitKey(KEY_INPUT_RIGHT) == 1) {
-
+	
+	else if (CheckHitKey(KEY_INPUT_RIGHT) == 1 && CheckHitKey(KEY_INPUT_DOWN) == 1) {
+	
 		x += 10;
-
+		y += 10;
+		angle = 45;
+	
+	}
+	
+	else if (CheckHitKey(KEY_INPUT_LEFT) == 1 && CheckHitKey(KEY_INPUT_UP) == 1) {
+	
+		x -= 10;
+		y -= 10; 
+		angle = 225;
+	
+	}
+	
+	else if (CheckHitKey(KEY_INPUT_LEFT) == 1 && CheckHitKey(KEY_INPUT_DOWN) == 1) {
+	
+		x -= 10; 
+		y += 10;
+		angle = 135;
+	
+	}
+	
+	else if (CheckHitKey(KEY_INPUT_RIGHT) == 1) {
+	
+		x += 10; 
+		angle = 0;
+	
+	}
+	
+	else if (CheckHitKey(KEY_INPUT_LEFT) == 1) {
+	
+		x -= 10;
+		angle = 180;
+	
+	}
+	
+	else if (CheckHitKey(KEY_INPUT_UP) == 1) {
+	
+		y -= 10;
+		angle = 270;
+	
+	}
+	
+	else if (CheckHitKey(KEY_INPUT_DOWN) == 1) {
+	
+		y += 10;
+		angle = 90;
+	
 	}
 
-	if (x < 0) {
-
+	if (x < 0) { 
+		
 		x = WIDTH;
-
+	
 	}
-
+	
 	if (x > WIDTH) {
-
+		
 		x = 0;
-
+	
 	}
-
-	if (y < 0) {
-
+	
+	if (y < EDGE - 1)  {
+		
 		y = HEIGHT;
-
+	
 	}
-
-	if (y > HEIGHT) {
-
-		y = 0;
-
+	
+	if (y > HEIGHT) { 
+		
+		y = EDGE - 1;
+	
 	}
 
 }
@@ -309,13 +367,13 @@ void Fighter::enemymove() {
 	
 	}
 
-	if (y < 0) {
+	if (y < EDGE - 1)  {
 	
 		obj_vy = ENEMY_SPEED;
 	
 	}
 
-	if (y > HEIGHT) {
+	if (y > HEIGHT )  {
 	
 		obj_vy = -ENEMY_SPEED;
 	
@@ -332,5 +390,11 @@ void Fighter::shoot(Bullet& b) {
 	b.vy = BULLET_SPEED * sin(M_PI * angle / 180.0);
 
 	b.active = true;
+
+}
+
+void Fighter::damage(int val) {
+
+	hp = hp - val;
 
 }
