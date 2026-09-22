@@ -9,8 +9,8 @@
 using namespace std;
 
 const int FRAME_RATE = 30;
-const int FRAME_TITLE = 1000 / FRAME_RATE;
-const int limittime = 10;
+const int FRAME_TIME = 1000 / FRAME_RATE;
+const int limittime = 30;
 
 const int COL = 15;
 const int ROW = 9;
