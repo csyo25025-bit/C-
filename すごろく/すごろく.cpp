@@ -79,6 +79,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	};
 
+	int BGM= LoadSoundMem("MUSIC/BGM.mp3");
+	int CLICK = LoadSoundMem("MUSIC/CLICK.wav");
+
+	ChangeVolumeSoundMem(128, BGM);
+	ChangeVolumeSoundMem(150, CLICK);
+	PlaySoundMem(BGM, DX_PLAYTYPE_LOOP);
+	
+
 	colors.Init();
 
 	SetBackgroundColor(0, 0, 0);
@@ -109,6 +117,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			if (CheckHitKey(KEY_INPUT_SPACE)) {
 			
+				PlaySoundMem(CLICK, DX_PLAYTYPE_BACK);
 				scene = PLAY;
 			
 			}
