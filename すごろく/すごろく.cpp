@@ -14,6 +14,10 @@ const int HEIGHT = 640;
 
 const int BSIZE = 80;
 
+/*キャラクターサイズ*/
+const int CHARA_X = 0;
+const int CHARA_Y = 285;
+
 enum {TITLE,PLAY,DICE,MOVE,RESULT};
 
 /*色設定*/
@@ -67,23 +71,42 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetGraphMode(WIDTH, HEIGHT, 32);
 	ChangeWindowMode(TRUE);
 
+	int dx = 0;
+
 	if (DxLib_Init() == -1) {
 	
 		return -1;
 	
 	}
 
-	int img[1] = {
+	int img[2] = {
 
-		LoadGraph("BACK/TITLE_BACK.jpg")
+		LoadGraph("BACK/TITLE_BACK.jpg"),
+		LoadGraph("BACK/MOVE_BACK.jpg")
 
 	};
 
 	int BGM= LoadSoundMem("MUSIC/BGM.mp3");
 	int CLICK = LoadSoundMem("MUSIC/CLICK.wav");
+	int WALK = LoadSoundMem("MUSIC/WALK.wav");
+
+	int CHARA[8] = {
+
+		LoadGraph("CHARA1/CHARA1_WAL.png"),
+		LoadGraph("CHARA1/CHARA1_PRE.png"),
+		LoadGraph("CHARA1/CHARA1_DIS.png"),
+		LoadGraph("CHARA1/CHARA1_SUP.png"),
+
+		LoadGraph("CHARA2/CHARA2_WAL.png"),
+		LoadGraph("CHARA2/CHARA2_PRE.png"),
+		LoadGraph("CHARA2/CHARA2_DIS.png"),
+		LoadGraph("CHARA2/CHARA2_SUP.png")
+
+	};
 
 	ChangeVolumeSoundMem(128, BGM);
 	ChangeVolumeSoundMem(150, CLICK);
+	ChangeVolumeSoundMem(100, WALK);
 	PlaySoundMem(BGM, DX_PLAYTYPE_LOOP);
 	
 
@@ -118,12 +141,42 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			if (CheckHitKey(KEY_INPUT_SPACE)) {
 			
 				PlaySoundMem(CLICK, DX_PLAYTYPE_BACK);
+				dx = 0;
 				scene = PLAY;
 			
 			}
 
 			break;
 
+		case PLAY:
+
+			DrawBox(0, 0, WIDTH, HEIGHT, colors.BLACK, TRUE);
+			drawText(WIDTH / 2, HEIGHT / 2, "PLAY GAME", 0, 80, colors.WHITE);
+
+			if (CheckHitKey(KEY_INPUT_M) == 1) {
+			
+				scene = MOVE;
+				PlaySoundMem(WALK, DX_PLAYTYPE_BACK);
+			
+			}
+
+			break;
+
+		case MOVE:
+			
+			DrawGraph(0, 0, img[1], FALSE);
+			dx = dx + 10;
+			DrawGraph(CHARA_X+dx, CHARA_Y, CHARA[4], TRUE);
+
+			if (CHARA_X + dx > 800) {
+			
+				StopSoundMem(WALK);
+				scene = PLAY;
+			
+			}
+
+			break;
+		
 		}
 	
 		ScreenFlip();
